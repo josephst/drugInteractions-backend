@@ -37,55 +37,33 @@ test.afterEach.always('wipe db', async (t) => {
   await request(t.context.app).delete('/apiV1/drugs');
 });
 
-test.serial('database starts empty', async (t) => {
-  await request(t.context.app).delete('/apiV1/drugs');
-  const res = await request(t.context.app)
-    .get('/apiV1/drugs/meta/count');
-  t.is(res.status, 200);
-  t.is(res.body.count, 0);
-});
-
-test.serial('get drug document count', async (t) => {
+test.serial('lookup Lepirudin by ID', async (t) => {
+  const drug = sampleData[0];
   await request(t.context.app)
     .post('/apiV1/drugs')
-    .send(sampleData[0]);
+    .send(drug);
   const res = await request(t.context.app)
-    .get('/apiV1/drugs/meta/count');
-  t.is(res.body.count, 1);
-  const delRes = await request(t.context.app)
-    .delete('/apiV1/drugs');
-  t.is(delRes.status, 204);
-  const delSizeRes = await request(t.context.app)
-    .get('/apiV1/drugs/meta/count');
-  t.is(delSizeRes.body.count, 0);
+    .get(`/apiV1/drugs/id/${drug.drugbankId}`);
+  t.is(res.status, 200);
+  t.is(res.body.drugbankId, drug.drugbankId);
 });
 
-test.serial('delete clears DB', async (t) => {
+test.serial('looking up non-existant Drug fails with 404', async (t) => {
   const res = await request(t.context.app)
-    .delete('/apiV1/drugs');
+    .get('/apiV1/drugs/id/missingID');
+  t.is(res.status, 404);
+  t.is(res.body.error.code, 'MISSING');
+});
+
+test.serial('delete Lepirudin by ID', async (t) => {
+  const drug = sampleData[0];
+  await request(t.context.app)
+    .post('/apiV1/drugs')
+    .send(drug);
+  const res = await request(t.context.app)
+    .delete(`/apiV1/drugs/id/${drug.drugbankId}`);
   t.is(res.status, 204);
+  const countRes = await request(t.context.app)
+    .get('/apiV1/drugs/meta/count');
+  t.is(countRes.body.count, 0);
 });
-
-test.serial('save Lepirudin to DB', async (t) => {
-  const res = await request(t.context.app)
-    .post('/apiV1/drugs')
-    .send(sampleData[0]);
-  t.is(res.status, 201);
-  t.is(res.body.drugbankId, sampleData[0].drugbankId);
-  t.is(res.body.description, sampleData[0].description);
-  t.is(res.body.name, sampleData[0].name);
-});
-
-test.serial('saving same drug twice fails', async (t) => {
-  const res = await request(t.context.app)
-    .post('/apiV1/drugs')
-    .send(sampleData[0]);
-  t.is(res.status, 201);
-  const res2 = await request(t.context.app)
-    .post('/apiV1/drugs')
-    .send(sampleData[0]);
-  t.is(res2.status, 409);
-  t.is(res2.body.error.code, 'EXISTS');
-});
-
-// NOT going to implement saving many drugs at once, currently.

@@ -23,4 +23,6 @@ export const drugSchema = new mongoose.Schema({
   bufferCommands: false,
 });
 
+drugSchema.index({ name: 'text' });
+
 export const drugModel = mongoose.model<IDrugDoc>('Drug', drugSchema);

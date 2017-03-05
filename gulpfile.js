@@ -46,7 +46,7 @@ gulp.task('test', ['lint', 'scripts'], () => {
   gulp.src(paths.fixturesIn)
     .pipe(gulp.dest(paths.fixturesOut));
   return gulp.src(paths.testsOut)
-    .pipe(ava({ verbose: true }));
+    .pipe(ava({ verbose: true, serial: true }));
 });
 
 gulp.task('test:watch', ['test'], () =>
