@@ -3,6 +3,10 @@
   "rules": {
     "quotemark": [
       "single"
+    ],
+    "linebreak-style": [
+      true,
+      "LF"
     ]
   }
 }
