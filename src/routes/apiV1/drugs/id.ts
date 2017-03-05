@@ -1,6 +1,8 @@
 import * as express from 'express';
+import { stripDrugDoc } from '../../../bin/helpers';
 import { drugModel } from '../../../models/Drug';
 import { IDrug, IDrugDoc } from '../../../models/interfaces/IDrugDoc.d';
+import { IDrugInteraction } from '../../../models/interfaces/IDrugInteractionDoc';
 import { DBERR } from './index';
 const router = express.Router();
 
@@ -20,7 +22,7 @@ router.get('/:id', async (req, res) => {
         },
       });
     } else {
-      res.status(200).json(drug);
+      res.status(200).json(stripDrugDoc(drug));
     }
   } catch (err) {
     res.status(503).json(DBERR);

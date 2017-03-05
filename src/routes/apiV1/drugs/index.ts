@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { stripDrugDoc } from '../../../bin/helpers';
 import { drugModel } from '../../../models/Drug';
 import { IDrug, IDrugDoc } from '../../../models/interfaces/IDrugDoc.d';
 import { router as idRoute } from './id';
@@ -47,7 +48,7 @@ router.post('/', async (req, res) => {
     } else {
       try {
         const result = await drug.save();
-        res.status(201).json(result.toJSON());
+        res.status(201).json(stripDrugDoc(result));
       } catch (saveErr) {
         res.status(503).json({
           error: {
