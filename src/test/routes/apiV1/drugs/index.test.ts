@@ -4,7 +4,7 @@ import * as express from 'express';
 import * as fs from 'fs';
 import * as mongoose from 'mongoose';
 import * as request from 'supertest';
-import { dbOptions, dbPath } from '../../../../config/config';
+import { dbOptions, dbPath, password, username } from '../../../../config/config';
 import { IDrug } from '../../../../models/interfaces/IDrugDoc.d';
 import { router as indexRoute } from '../../../../routes/apiV1/drugs/index';
 
@@ -34,7 +34,13 @@ test.beforeEach('make a new server', (t) => {
 });
 
 test.afterEach.always('wipe db', async (t) => {
-  await request(t.context.app).delete('/apiV1/drugs');
+  const res = await request(t.context.app)
+    .delete('/apiV1/drugs')
+    .send({
+      username,
+      password,
+    });
+  t.is(res.status, 204);
 });
 
 test('index route gives 200', async (t) => {
@@ -56,7 +62,9 @@ test('name route gives 200', async (t) => {
 });
 
 test.serial('database starts empty', async (t) => {
-  await request(t.context.app).delete('/apiV1/drugs');
+  const deleteRes = await request(t.context.app)
+    .delete('/apiV1/drugs')
+    .send({ password, username });
   const res = await request(t.context.app)
     .get('/apiV1/drugs/meta/count');
   t.is(res.status, 200);
@@ -71,7 +79,8 @@ test.serial('get drug document count', async (t) => {
     .get('/apiV1/drugs/meta/count');
   t.is(res.body.count, 1);
   const delRes = await request(t.context.app)
-    .delete('/apiV1/drugs');
+    .delete('/apiV1/drugs')
+    .send({ password, username });
   t.is(delRes.status, 204);
   const delSizeRes = await request(t.context.app)
     .get('/apiV1/drugs/meta/count');
@@ -80,8 +89,41 @@ test.serial('get drug document count', async (t) => {
 
 test.serial('delete clears DB', async (t) => {
   const res = await request(t.context.app)
-    .delete('/apiV1/drugs');
+    .delete('/apiV1/drugs')
+    .send({
+      username,
+      password,
+    });
   t.is(res.status, 204);
+});
+
+test.serial('deleting without authentication fails', async (t) => {
+  const res1 = await request(t.context.app)
+    .delete('/apiV1/drugs');
+  t.is(res1.status, 403);
+  const res2 = await request(t.context.app)
+    .delete('/apiV1/drugs')
+    .send({
+      username,
+      // no password
+    });
+  t.is(res2.status, 403);
+  const res3 = await request(t.context.app)
+    .delete('/apiV1/drugs')
+    .send({
+      // no username
+      password,
+    });
+  t.is(res3.status, 403);
+  const res4 = await request(t.context.app)
+    .delete('/apiV1/drugs')
+    .send({
+      // wrong password
+      username,
+      password: 'foo',
+    });
+  t.is(res4.status, 403);
+
 });
 
 test.serial('save Lepirudin to DB', async (t) => {

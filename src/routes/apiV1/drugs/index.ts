@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { stripDrugDoc } from '../../../bin/helpers';
+import { password, username } from '../../../config/config';
 import { drugModel } from '../../../models/Drug';
 import { IDrug, IDrugDoc } from '../../../models/interfaces/IDrugDoc.d';
 import { router as idRoute } from './id';
@@ -22,11 +23,21 @@ router.get('/', (req, res) => {
  * Delete all Drugs in DB
  */
 router.delete('/', async (req, res) => {
-  try {
-    await drugModel.remove({});
-    res.status(204).send();
-  } catch (err) {
-    res.status(503).send();
+  const { username: reqUsername, password: reqPassword } = req.body;
+  if (reqUsername !== username || reqPassword !== password) {
+    res.status(403).json({
+      error: {
+        code: 'UNAUTHORIZED',
+        message: 'Not authorized to perform this action',
+      },
+    });
+  } else {
+    try {
+      await drugModel.remove({});
+      res.status(204).send();
+    } catch (err) {
+      res.status(503).send();
+    }
   }
 });
 

@@ -4,7 +4,7 @@ import * as express from 'express';
 import * as fs from 'fs';
 import * as mongoose from 'mongoose';
 import * as request from 'supertest';
-import { dbOptions, dbPath } from '../../../../config/config';
+import { dbOptions, dbPath, password, username } from '../../../../config/config';
 import { IDrug } from '../../../../models/interfaces/IDrugDoc.d';
 import { router as indexRoute } from '../../../../routes/apiV1/drugs/index';
 
@@ -34,7 +34,9 @@ test.beforeEach('make a new server', (t) => {
 });
 
 test.afterEach.always('wipe db', async (t) => {
-  await request(t.context.app).delete('/apiV1/drugs');
+  const res = await request(t.context.app)
+    .delete('/apiV1/drugs')
+    .send({ password, username });
 });
 
 test.serial('lookup Lepirudin by ID', async (t) => {
@@ -55,13 +57,20 @@ test.serial('looking up non-existant Drug fails with 404', async (t) => {
   t.is(res.body.error.code, 'MISSING');
 });
 
+test.serial('deleting without authentication fails regardless of ID', async (t) => {
+  const res = await request(t.context.app)
+    .delete('/apiV1/drugs/id/foo');
+  t.is(res.status, 403);
+});
+
 test.serial('delete Lepirudin by ID', async (t) => {
   const drug = sampleData[0];
   await request(t.context.app)
     .post('/apiV1/drugs')
     .send(drug);
   const res = await request(t.context.app)
-    .delete(`/apiV1/drugs/id/${drug.drugbankId}`);
+    .delete(`/apiV1/drugs/id/${drug.drugbankId}`)
+    .send({ password, username });
   t.is(res.status, 204);
   const countRes = await request(t.context.app)
     .get('/apiV1/drugs/meta/count');
