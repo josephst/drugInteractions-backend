@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { drugModel } from '../../../models/Drug';
-import { IDrug } from '../../../models/interfaces/IDrugDoc.d';
+import { IDrug, IDrugDoc } from '../../../models/interfaces/IDrugDoc.d';
 import { router as idRoute } from './id';
 import { router as metaRoute } from './meta';
 import { router as nameRoute } from './name';
@@ -30,7 +30,7 @@ router.delete('/', async (req, res) => {
 });
 
 /**
- * Add a Drug to DB. Idempotent; will not allow adding same Drug (by Drugbank ID) twice.
+ * Add Drug to DB. Idempotent; will not allow adding same Drug (by Drugbank ID) twice.
  */
 router.post('/', async (req, res) => {
   try {

@@ -38,6 +38,7 @@ test.afterEach.always('wipe db', async (t) => {
 });
 
 test.serial('database starts empty', async (t) => {
+  await request(t.context.app).delete('/apiV1/drugs');
   const res = await request(t.context.app)
     .get('/apiV1/drugs/meta/count');
   t.is(res.status, 200);
@@ -70,8 +71,21 @@ test.serial('save Lepirudin to DB', async (t) => {
     .post('/apiV1/drugs')
     .send(sampleData[0]);
   t.is(res.status, 201);
+  t.is(res.body.drugbankId, sampleData[0].drugbankId);
+  t.is(res.body.description, sampleData[0].description);
+  t.is(res.body.name, sampleData[0].name);
 });
 
-test.todo('saving same drug twice fails');
+test.serial('saving same drug twice fails', async (t) => {
+  const res = await request(t.context.app)
+    .post('/apiV1/drugs')
+    .send(sampleData[0]);
+  t.is(res.status, 201);
+  const res2 = await request(t.context.app)
+    .post('/apiV1/drugs')
+    .send(sampleData[0]);
+  t.is(res2.status, 409);
+  t.is(res2.body.error.code, 'EXISTS');
+});
 
-test.todo('get Lepirudin from DB');
+// NOT going to implement saving many drugs at once, currently.
