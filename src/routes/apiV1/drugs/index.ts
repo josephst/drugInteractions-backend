@@ -3,6 +3,7 @@ import { stripDrugDoc } from '../../../bin/helpers';
 import { password, username } from '../../../config/config';
 import { drugModel } from '../../../models/Drug';
 import { IDrug, IDrugDoc } from '../../../models/interfaces/IDrugDoc.d';
+import { auth } from '../helpers/authenticate';
 import { router as idRoute } from './id';
 import { router as metaRoute } from './meta';
 import { router as nameRoute } from './name';
@@ -22,29 +23,19 @@ router.get('/', (req, res) => {
 /**
  * Delete all Drugs in DB
  */
-router.delete('/', async (req, res) => {
-  const { username: reqUsername, password: reqPassword } = req.body;
-  if (reqUsername !== username || reqPassword !== password) {
-    res.status(403).json({
-      error: {
-        code: 'UNAUTHORIZED',
-        message: 'Not authorized to perform this action',
-      },
-    });
-  } else {
+router.delete('/', auth, async (req, res) => {
     try {
       await drugModel.remove({});
       res.status(204).send();
     } catch (err) {
       res.status(503).send();
     }
-  }
 });
 
 /**
  * Add Drug to DB. Idempotent; will not allow adding same Drug (by Drugbank ID) twice.
  */
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const drug = new drugModel(req.body);
     const drugbankId = drug.drugbankId;

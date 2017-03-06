@@ -36,13 +36,15 @@ test.beforeEach('make a new server', (t) => {
 test.afterEach.always('wipe db', async (t) => {
   const res = await request(t.context.app)
     .delete('/apiV1/drugs')
-    .send({ password, username });
+    .auth(username, password);
+  t.is(res.status, 204);
 });
 
 test.serial('lookup Lepirudin by ID', async (t) => {
   const drug = sampleData[0];
   await request(t.context.app)
     .post('/apiV1/drugs')
+    .auth(username, password)
     .send(drug);
   const res = await request(t.context.app)
     .get(`/apiV1/drugs/id/${drug.drugbankId}`);
@@ -67,10 +69,11 @@ test.serial('delete Lepirudin by ID', async (t) => {
   const drug = sampleData[0];
   await request(t.context.app)
     .post('/apiV1/drugs')
+    .auth(username, password)
     .send(drug);
   const res = await request(t.context.app)
     .delete(`/apiV1/drugs/id/${drug.drugbankId}`)
-    .send({ password, username });
+    .auth(username, password);
   t.is(res.status, 204);
   const countRes = await request(t.context.app)
     .get('/apiV1/drugs/meta/count');

@@ -36,10 +36,7 @@ test.beforeEach('make a new server', (t) => {
 test.afterEach.always('wipe db', async (t) => {
   const res = await request(t.context.app)
     .delete('/apiV1/drugs')
-    .send({
-      username,
-      password,
-    });
+    .auth(username, password);
   t.is(res.status, 204);
 });
 
@@ -64,7 +61,7 @@ test('name route gives 200', async (t) => {
 test.serial('database starts empty', async (t) => {
   const deleteRes = await request(t.context.app)
     .delete('/apiV1/drugs')
-    .send({ password, username });
+    .auth(username, password);
   const res = await request(t.context.app)
     .get('/apiV1/drugs/meta/count');
   t.is(res.status, 200);
@@ -74,13 +71,14 @@ test.serial('database starts empty', async (t) => {
 test.serial('get drug document count', async (t) => {
   await request(t.context.app)
     .post('/apiV1/drugs')
+    .auth(username, password)
     .send(sampleData[0]);
   const res = await request(t.context.app)
     .get('/apiV1/drugs/meta/count');
   t.is(res.body.count, 1);
   const delRes = await request(t.context.app)
     .delete('/apiV1/drugs')
-    .send({ password, username });
+    .auth(username, password);
   t.is(delRes.status, 204);
   const delSizeRes = await request(t.context.app)
     .get('/apiV1/drugs/meta/count');
@@ -90,10 +88,7 @@ test.serial('get drug document count', async (t) => {
 test.serial('delete clears DB', async (t) => {
   const res = await request(t.context.app)
     .delete('/apiV1/drugs')
-    .send({
-      username,
-      password,
-    });
+    .auth(username, password);
   t.is(res.status, 204);
 });
 
@@ -103,32 +98,18 @@ test.serial('deleting without authentication fails', async (t) => {
   t.is(res1.status, 403);
   const res2 = await request(t.context.app)
     .delete('/apiV1/drugs')
-    .send({
-      username,
-      // no password
-    });
+    .auth(username, 'badpassword');
   t.is(res2.status, 403);
   const res3 = await request(t.context.app)
     .delete('/apiV1/drugs')
-    .send({
-      // no username
-      password,
-    });
+    .auth('bad username', password);
   t.is(res3.status, 403);
-  const res4 = await request(t.context.app)
-    .delete('/apiV1/drugs')
-    .send({
-      // wrong password
-      username,
-      password: 'foo',
-    });
-  t.is(res4.status, 403);
-
 });
 
 test.serial('save Lepirudin to DB', async (t) => {
   const res = await request(t.context.app)
     .post('/apiV1/drugs')
+    .auth(username, password)
     .send(sampleData[0]);
   t.is(res.status, 201);
   t.is(res.body.drugbankId, sampleData[0].drugbankId);
@@ -136,13 +117,22 @@ test.serial('save Lepirudin to DB', async (t) => {
   t.is(res.body.name, sampleData[0].name);
 });
 
+test.serial('saving without authentication fails', async (t) => {
+  const res = await request(t.context.app)
+    .post('/apiV1/drugs')
+    .send(sampleData[0]);
+  t.is(res.status, 403);
+});
+
 test.serial('saving same drug twice fails', async (t) => {
   const res = await request(t.context.app)
     .post('/apiV1/drugs')
+    .auth(username, password)
     .send(sampleData[0]);
   t.is(res.status, 201);
   const res2 = await request(t.context.app)
     .post('/apiV1/drugs')
+    .auth(username, password)
     .send(sampleData[0]);
   t.is(res2.status, 409);
   t.is(res2.body.error.code, 'EXISTS');

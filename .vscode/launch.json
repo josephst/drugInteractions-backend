@@ -10,7 +10,7 @@
       "name": "Ava Test",
       "program": "${workspaceRoot}/node_modules/ava/profile.js",
       "args": [
-        "${workspaceRoot}/out/test/routes/apiV1/drugs/name.test.js"
+        "${workspaceRoot}/out/test/routes/apiV1/drugs/id.test.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "preLaunchTask": "scripts",

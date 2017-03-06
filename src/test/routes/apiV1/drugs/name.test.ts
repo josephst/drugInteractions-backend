@@ -4,7 +4,7 @@ import * as express from 'express';
 import * as fs from 'fs';
 import * as mongoose from 'mongoose';
 import * as request from 'supertest';
-import { dbOptions, dbPath } from '../../../../config/config';
+import { dbOptions, dbPath, password, username } from '../../../../config/config';
 import { IDrug } from '../../../../models/interfaces/IDrugDoc.d';
 import { router as indexRoute } from '../../../../routes/apiV1/drugs/index';
 
@@ -34,7 +34,9 @@ test.beforeEach('make a new server', (t) => {
 });
 
 test.afterEach.always('wipe db', async (t) => {
-  await request(t.context.app).delete('/apiV1/drugs');
+  await request(t.context.app)
+    .delete('/apiV1/drugs')
+    .auth(username, password);
 });
 
 test.serial('Search for Drug by name returns list of Drugs', async (t) => {
@@ -43,6 +45,7 @@ test.serial('Search for Drug by name returns list of Drugs', async (t) => {
   const doneEntering = slice.map(async (drug) => {
     const res = await request(t.context.app)
       .post('/apiV1/drugs')
+      .auth(username, password)
       .send(drug);
     t.is(res.status, 201);
     return res;
@@ -58,6 +61,7 @@ test.serial('Search for Drug by name returns list of Drugs', async (t) => {
 test.serial('Searching by incomplete name returns list of Drugs', async (t) => {
   const res = await request(t.context.app)
     .post('/apiV1/drugs')
+    .auth(username, password)
     .send(sampleData[0]);
   t.is(res.status, 201);
   const searchRes = await request(t.context.app)
