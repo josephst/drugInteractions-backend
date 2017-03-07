@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "gulp scripts && node ./out/bin/www",
+    "build": "gulp scripts",
+    "start": "node ./out/bin/www",
     "test": "gulp test"
   },
   "ava": {
