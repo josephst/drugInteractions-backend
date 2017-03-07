@@ -7,6 +7,7 @@
 import * as debugPackage from 'debug';
 import * as http from 'http';
 import { app } from '../app';
+import { config } from '../config/config';
 
 const debug = debugPackage('new-backend:server');
 
