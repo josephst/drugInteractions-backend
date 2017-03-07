@@ -4,14 +4,14 @@ import * as express from 'express';
 import * as fs from 'fs';
 import * as mongoose from 'mongoose';
 import * as request from 'supertest';
-import { dbOptions, dbPath, password, username } from '../../../../config/config';
+import { config, dbOptions, password, username } from '../../../../config/config';
 import { IDrug } from '../../../../models/interfaces/IDrugDoc.d';
 import { router as indexRoute } from '../../../../routes/apiV1/drugs/index';
 
 let sampleData: IDrug[];
 
 test.before('connect to testing db', async (t) => {
-  await (mongoose.connect(`${dbPath}`, dbOptions) as any);
+  await (mongoose.connect(`${config.dbPath}`, dbOptions) as any);
 });
 
 test.cb.before('read sample data', (t) => {

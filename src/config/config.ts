@@ -1,13 +1,26 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-const dbName = 'testing';
-let dbPath: string;
-if (process.env.DEPLOYED) {
-  dbPath = `mongodb://joseph:${process.env.MONGO_PASS}@ds058579.mlab.com:58579/${dbName}`;
-} else {
-  dbPath = `mongodb://localhost:${process.env.DB_PORT}/${dbName}`;
+const env = process.env.NODE_ENV || 'development';
+
+export interface IConfig {
+  [devEnv: string]: {
+    dbPath: string;
+  };
 }
+
+const config: IConfig = {
+  development: {
+    dbPath: `mongodb://localhost:${process.env.DB_PORT}/testing`,
+  },
+  production: {
+    dbPath: `mongodb://joseph:${process.env.MONGO_PASS}@ds058579.mlab.com:58579/production`,
+  },
+  testing: {
+    dbPath: `mongodb://joseph:${process.env.MONGO_PASS}@ds058579.mlab.com:58579/testing`,
+  },
+};
+const currConfig = config[env];
 
 const dbOptions = {
   server: {
@@ -17,7 +30,7 @@ const dbOptions = {
   },
 };
 
-const username = '44dd4d5f-bf99-45b4-978f-837203f06b54';
+const username = process.env.API_USERNAME;
 const password = process.env.API_KEY;
 
-export { dbPath, dbOptions, username, password };
+export { currConfig as config, dbOptions, username, password };

@@ -5,16 +5,16 @@ import * as mongoose from 'mongoose';
 import * as logger from 'morgan';
 import * as path from 'path';
 import * as favicon from 'serve-favicon';
-import { dbOptions, dbPath } from './config/config';
+import { config, dbOptions } from './config/config';
 import { IExpressErr } from './global.d';
 
 import { router as index } from './routes/index';
 
 const app = express();
-mongoose.connect(`${dbPath}`, dbOptions);
+mongoose.connect(`${config.dbPath}`, dbOptions);
 const db = mongoose.connection;
 db.on('error', () => {
-  throw new Error(`unable to connect to db at ${dbPath}`);
+  throw new Error(`unable to connect to db at ${config.dbPath}`);
 });
 
 // view engine setup
