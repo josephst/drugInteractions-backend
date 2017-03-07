@@ -106,12 +106,12 @@ IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
 )
 
 :: 4. Compile TS with Gulp
-if [ -e "$DEPLOYMENT_TARGET\gulpfile.js" ]; then
+IF EXIST "$DEPLOYMENT_TARGET\gulpfile.js" (
   pushd "$DEPLOYMENT_TARGET"
   call :ExecuteCmd !NPM_CMD! run build
   IF !ERRORLEVEL! NEQ 0 goto error
   popd
-fi
+)
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 goto end
