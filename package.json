@@ -17,12 +17,17 @@
     "body-parser": "~1.16.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.0",
+    "del": "^2.2.2",
     "dotenv": "^4.0.0",
     "express": "~4.14.1",
+    "gulp": "^3.9.1",
+    "gulp-sourcemaps": "^2.4.1",
+    "gulp-typescript": "^3.1.5",
     "jade": "~1.11.0",
     "mongoose": "^4.8.5",
     "morgan": "~1.7.0",
-    "serve-favicon": "~2.3.2"
+    "serve-favicon": "~2.3.2",
+    "typescript": "^2.2.1"
   },
   "devDependencies": {
     "@types/debug": "^0.0.29",
@@ -31,15 +36,10 @@
     "@types/mongoose": "^4.7.7",
     "@types/supertest": "^2.0.0",
     "ava": "^0.18.2",
-    "del": "^2.2.2",
-    "gulp": "^3.9.1",
     "gulp-ava": "^0.16.0",
-    "gulp-sourcemaps": "^2.4.1",
     "gulp-tslint": "^7.1.0",
-    "gulp-typescript": "^3.1.5",
     "supertest": "^3.0.0",
-    "tslint": "^4.5.1",
-    "typescript": "^2.2.1"
+    "tslint": "^4.5.1"
   },
   "engines": {
     "node": "7.6.0"
