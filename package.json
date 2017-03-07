@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "postinstall": "node ./node_modules/gulp/bin/gulp.js scripts",
     "build": "gulp scripts",
     "start": "node ./out/bin/www",
     "test": "gulp test"
@@ -14,7 +15,6 @@
     "serial": true
   },
   "dependencies": {
-    "ava": "^0.18.2",    
     "basic-auth": "^1.1.0",
     "body-parser": "~1.16.0",
     "cookie-parser": "~1.4.3",
@@ -31,7 +31,6 @@
     "mongoose": "^4.8.5",
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.2",
-    "tslint": "^4.5.1",    
     "typescript": "^2.2.1"
   },
   "devDependencies": {
@@ -40,7 +39,9 @@
     "@types/gulp": "^3.8.32",
     "@types/mongoose": "^4.7.7",
     "@types/supertest": "^2.0.0",
-    "supertest": "^3.0.0"
+    "ava": "^0.18.2",
+    "supertest": "^3.0.0",
+    "tslint": "^4.5.1"
   },
   "engines": {
     "node": "7.6.0"

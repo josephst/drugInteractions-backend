@@ -23,7 +23,7 @@ gulp.task('lint', () =>
       emitError: false,
     })));
 
-gulp.task('scripts', ['clean:tests', 'clean:scripts'], () => {
+gulp.task('scripts', ['clean'], () => {
   gulp.src(paths.nonTsSource)
     .pipe(gulp.dest('./out'));
   const tsResult = gulp.src(paths.source)
@@ -34,7 +34,7 @@ gulp.task('scripts', ['clean:tests', 'clean:scripts'], () => {
 });
 
 gulp.task('clean:scripts', () =>
-  del('./out/**', '!./out/', '!./out/test'));
+  del(['out/**', '!out', '!out/test', '!out/bin', '!out/bin/www.js']));
 gulp.task('clean:tests', () =>
   del(paths.testsOut));
 gulp.task('clean', ['clean:scripts', 'clean:tests']);

@@ -72,4 +72,7 @@ typings/
 # End of https://www.gitignore.io/api/node,visualstudiocode
 
 # CUSTOM
-out/
+out/*
+!out/bin
+out/bin/*
+!out/bin/www.js
