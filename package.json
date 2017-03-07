@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "postinstall": "node ./node_modules/gulp/bin/gulp.js scripts",
     "build": "gulp scripts",
     "start": "node ./out/bin/www",
     "test": "gulp test"
