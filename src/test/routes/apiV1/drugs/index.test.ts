@@ -11,7 +11,7 @@ import { router as indexRoute } from '../../../../routes/apiV1/drugs/index';
 let sampleData: IDrug[];
 
 test.before('connect to testing db', async (t) => {
-  await (mongoose.connect(`${dbPath}/testing`, dbOptions) as any);
+  await (mongoose.connect(`${dbPath}`, dbOptions) as any);
 });
 
 test.cb.before('read sample data', (t) => {

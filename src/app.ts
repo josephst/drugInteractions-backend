@@ -5,13 +5,13 @@ import * as mongoose from 'mongoose';
 import * as logger from 'morgan';
 import * as path from 'path';
 import * as favicon from 'serve-favicon';
-import { dbName, dbOptions, dbPath } from './config/config';
+import { dbOptions, dbPath } from './config/config';
 import { IExpressErr } from './global.d';
 
 import { router as index } from './routes/index';
 
 const app = express();
-mongoose.connect(`${dbPath}/${dbName}`, dbOptions);
+mongoose.connect(`${dbPath}`, dbOptions);
 const db = mongoose.connection;
 db.on('error', () => {
   throw new Error(`unable to connect to db at ${dbPath}`);
