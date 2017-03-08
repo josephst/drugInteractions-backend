@@ -1,19 +1,20 @@
 #!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const debugPackage = require("debug");
+const debug = require("debug");
 const http = require("http");
 const app_1 = require("../app");
-const debug = debugPackage('new-backend:server');
+debug('new-backend:server');
 /**
  * Get port from environment and store in Express.
  */
+const app = new app_1.App().express;
 const port = normalizePort(process.env.PORT || '3000');
-app_1.app.set('port', port);
+app.set('port', port);
 /**
  * Create HTTP server.
  */
-const server = http.createServer(app_1.app);
+const server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */

@@ -4,17 +4,18 @@
  * Module dependencies.
  */
 
-import * as debugPackage from 'debug';
+import * as debug from 'debug';
 import * as http from 'http';
-import { app } from '../app';
+import { App } from '../app';
 import { config } from '../config/config';
 
-const debug = debugPackage('new-backend:server');
+debug('new-backend:server');
 
 /**
  * Get port from environment and store in Express.
  */
 
+const app = new App().express;
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
